@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ferramenta de Estudo</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background: linear-gradient(45deg, blue, purple, white, red);
+            color: white;
+            text-align: center;
+        }
+        input, button {
+            margin: 5px;
+            padding: 10px;
+            font-size: 16px;
+        }
+        #quiz {
+            display: none;
+        }
+        footer {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: rgba(0, 0, 0, 0.7);
+        }
+    </style>
+</head>
+<body>
+    <h1>Ferramenta de Estudos</h1>
+
+    <div>
+        <h2>Fazer Quiz</h2>
+        <button onclick="startQuiz()">Iniciar Quiz</button>
+    </div>
+
+    <div id="quiz">
+        <h2>Quiz</h2>
+        <div id="quiz-question"></div>
+        <input type="text" id="quiz-answer" placeholder="Digite sua resposta">
+        <button onclick="checkAnswer()">Responder</button>
+        <div id="result"></div>
+    </div>
+
+    <footer>
+        <div id="footer-content"></div>
+    </footer>
+
+    <script>
+        const flashcards = [
+            { question: "Qual é a capital do Brasil?", answer: "Brasília" },
+            { question: "Qual é a fórmula da água?", answer: "H2O" },
+            { question: "Quem escreveu 'Dom Casmurro'?", answer: "Machado de Assis" },
+            { question: "Qual é o maior planeta do sistema solar?", answer: "Júpiter" },
+            { question: "Em que ano ocorreu a Independência do Brasil?", answer: "1822" },
+            { question: "Qual é a língua oficial do Brasil?", answer: "Português" },
+            { question: "Qual é a moeda do Brasil?", answer: "Real" },
+            { question: "Quem foi o primeiro presidente do Brasil?", answer: "Deodoro da Fonseca" },
+            { question: "Qual é o rio mais longo do mundo?", answer: "Rio Amazonas" },
+            { question: "Quem pintou 'A Última Ceia'?", answer: "Leonardo da Vinci" },
+            { question: "Qual é o maior deserto do mundo?", answer: "Deserto da Antártida" },
+            { question: "Em que continente está o Egito?", answer: "África" },
+            { question: "Qual é a capital da França?", answer: "Paris" },
+            { question: "Quem foi Albert Einstein?", answer: "Físico" },
+            { question: "Qual é a fórmula química do sal?", answer: "NaCl" },
+            { question: "Quem descobriu a América?", answer: "Cristóvão Colombo" },
+            { question: "Qual é a capital da Itália?", answer: "Roma" },
+            { question: "Quantos continentes existem?", answer: "Sete" },
+            { question: "Qual é o animal mais rápido do mundo?", answer: "Falcão peregrino" },
+            { question: "Qual é a montanha mais alta do mundo?", answer: "Monte Everest" },
+            { question: "Quem escreveu 'A Moreninha'?", answer: "Joaquim Manuel de Macedo" },
+            { question: "Qual é o símbolo químico do oxigênio?", answer: "O" },
+            { question: "Qual é o maior oceano do mundo?", answer: "Oceano Pacífico" },
+            { question: "Quem foi o fundador da Microsoft?", answer: "Bill Gates" },
+            { question: "Qual é a capital da Alemanha?", answer: "Berlim" },
+            { question: "Em que ano foi a Revolução Francesa?", answer: "1789" },
+            { question: "Qual é o maior mamífero do mundo?", answer: "Baleia azul" },
+            { question: "Quem foi o primeiro homem a pisar na Lua?", answer: "Neil Armstrong" },
+            { question: "Qual é a principal função dos pulmões?", answer: "Troca de gases" },
+            { question: "Quem foi o autor de 'O Pequeno Príncipe'?", answer: "Antoine de Saint-Exupéry" },
+            { question: "Qual é a capital do Japão?", answer: "Tóquio" },
+            { question: "Qual é a fórmula da glicose?", answer: "C6H12O6" },
+            { question: "Quem foi o autor de 'Os Lusíadas'?", answer: "Luís de Camões" },
+            { question: "Qual é a capital da Argentina?", answer: "Buenos Aires" },
+            { question: "Qual é o elemento químico com o símbolo 'Fe'?", answer: "Ferro" },
+            { question: "Qual é a capital do Reino Unido?", answer: "Londres" },
+            { question: "Quem foi o líder da Revolução Russa?", answer: "Lênin" },
+            { question: "Qual é o menor país do mundo?", answer: "Vaticano" },
+            { question: "Qual é a capital da Espanha?", answer: "Madri" },
+            { question: "Quem escreveu 'A Divina Comédia'?", answer: "Dante Alighieri" },
+            { question: "Qual é a língua oficial da China?", answer: "Mandarim" },
+            { question: "Qual é a fórmula do dióxido de carbono?", answer: "CO2" },
+            { question: "Quem foi o último imperador do Brasil?", answer: "Dom Pedro II" },
+            { question: "Qual é a capital de Portugal?", answer: "Lisboa" },
+            { question: "Qual é o principal gás do efeito estufa?", answer: "Dióxido de carbono" },
+            { question: "Quem descobriu a penicilina?", answer: "Alexander Fleming" },
+            { question: "Qual é o maior animal terrestre?", answer: "Elefante" },
+            { question: "Qual é o símbolo químico do hidrogênio?", answer: "H" },
+            { question: "Quem foi a primeira mulher a ganhar um Prêmio Nobel?", answer: "Marie Curie" },
+            { question: "Qual é a capital do Canadá?", answer: "Ottawa" },
+            { question: "Qual é a unidade de medida da pressão?", answer: "Pascal" },
+            { question: "Qual é o maior continente do mundo?", answer: "Ásia" },
+            { question: "Quem pintou 'A Noite Estrelada'?", answer: "Vincent van Gogh" },
+            { question: "Qual é a capital da Rússia?", answer: "Moscou" },
+            { question: "Quem foi o fundador da Apple?", answer: "Steve Jobs" },
+            { question: "Qual é a capital da Índia?", answer: "Nova Délhi" },
+            { question: "Qual é o planeta mais próximo do Sol?", answer: "Mercúrio" },
+            { question: "Quem escreveu '1984'?", answer: "George Orwell" },
+            { question: "Qual é a fórmula química da cafeína?", answer: "C8H10N4O2" },
+            { question: "Qual é a capital da Austrália?", answer: "Canberra" },
+            { question: "Qual é o maior lago do mundo?", answer: "Mar Cáspio" },
+            { question: "Qual é a moeda do Japão?", answer: "Iene" },
+            { question: "Qual é a capital da Suécia?", answer: "Estocolmo" },
+            { question: "Quem foi o filósofo grego conhecido como o pai da filosofia?", answer: "Sócrates" },
+            { question: "Qual é o processo de transformação de água em vapor?", answer: "Evaporação" },
+            { question: "Qual é a principal fonte de energia do sol?", answer: "Fusão nuclear" },
+            { question: "Quem escreveu 'O Senhor dos Anéis'?", answer: "J.R.R. Tolkien" },
+            { question: "Qual é a capital da África do Sul?", answer: "Pretória" },
+            { question: "Qual é a montanha mais alta da América do Sul?", answer: "Aconcágua" },
+            { question: "Quem foi o inventor da lâmpada elétrica?", answer: "Thomas Edison" },
+            { question: "Qual é o maior país do mundo?", answer: "Rússia" },
+            { question: "Qual é o símbolo químico do ouro?", answer: "Au" },
+            { question: "Quem foi o autor de 'A Metamorfose'?", answer: "Franz Kafka" },
+            { question: "Qual é a capital da Grécia?", answer: "Atenas" },
+            { question: "Qual é a principal função do fígado?", answer: "Filtrar o sangue" },
+            { question: "Quem escreveu 'Guerra e Paz'?", answer: "Liev Tolstói" },
+            { question: "Qual é o maior rio do mundo?", answer: "Rio Amazonas" },
+            { question: "Qual é a capital da Nova Zelândia?", answer: "Wellington" }
+        ];
+        
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let totalQuestions = flashcards.length;
+        let shuffledFlashcards = shuffleArray(flashcards);
+        const questionsPerRound = 5;
+
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+
+        function startQuiz() {
+            currentQuestionIndex = 0;
+            score = 0;
+            document.getElementById('quiz').style.display = 'block';
+            showQuestion();
+        }
+
+        function showQuestion() {
+            if (currentQuestionIndex < totalQuestions) {
+                const currentFlashcard = shuffledFlashcards[currentQuestionIndex];
+                document.getElementById('quiz-question').innerText = currentFlashcard.question;
+                document.getElementById('quiz-answer').value = '';
+                document.getElementById('result').innerText = '';
+            } else {
+                endQuiz();
+            }
+        }
+
+        function checkAnswer() {
+            const userAnswer = document.getElementById('quiz-answer').value;
+            const correctAnswer = shuffledFlashcards[currentQuestionIndex].answer;
+            if (userAnswer.toLowerCase() === correctAnswer.toLowerCase()) {
+                score++;
+                document.getElementById('result').innerText = 'Correto!';
+            } else {
+                document.getElementById('result').innerText = `Incorreto! A resposta correta é: ${correctAnswer}`;
+            }
+            currentQuestionIndex++;
+            if (currentQuestionIndex % questionsPerRound === 0) {
+                endQuiz();
+            } else {
+                showQuestion();
+            }
+        }
+
+        function endQuiz() {
+            document.getElementById('quiz').style.display = 'none';
+            alert(`Fim do quiz! Você acertou: ${score} / ${currentQuestionIndex} perguntas.`);
+            // Reinicia o quiz
+            shuffledFlashcards = shuffleArray(flashcards);
+            currentQuestionIndex = 0;
+            score = 0;
+        }
+
+        function updateFooter() {
+            const now = new Date();
+            const options = { timeZone: 'America/Sao_Paulo', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false };
+            const time = now.toLocaleTimeString('pt-BR', options);
+            document.getElementById('footer-content').innerText = `Horário de Brasília: ${time}`;
+        }
+
+        setInterval(updateFooter, 1000);
+        updateFooter(); // Atualiza imediatamente ao carregar
+    </script>
+</body>
+</html>
